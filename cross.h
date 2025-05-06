@@ -6,7 +6,7 @@
 #include<stdbool.h>
 
 #define VEHICLES_SIZE (10)
-#define VEHICLES_ID_SIZE (10) //Vehicle1 - Vehicle99 + \0
+//#define VEHICLES_ID_SIZE (10) //Vehicle1 - Vehicle99 + \0
 #define NUM_OF_ROADS (4)
 //#define NUM_OF_LINES (1)
 //TODO: powinien byæ jeszcze RED_YELLOW_LIGHT, jako ¿ó³te po czerwonym
@@ -30,7 +30,6 @@ typedef enum {straight,
 
 typedef struct {
 	char* ID;
-	//TODO: trzeba zmienic na string
 	//direction_t startRoad;
 	direction_t end_direction;
 	turn_t turn;
@@ -38,7 +37,8 @@ typedef struct {
 
 typedef struct {
 	vehicle_t vehicles[VEHICLES_SIZE]; //TODO: musi byæ zrobiona linked list bo nie wiadomo ile aut bêdzie
-	light_state_t light_state;
+	light_state_t main_light_state;
+	light_state_t right_light_state; //strza³ka warunkowa w prawo
 	uint8_t car_num;
 	direction_t direction;
 	//uint8_t num_of_lines; //TODO zwiêkszenie liczby pasów 
@@ -68,12 +68,12 @@ typedef struct {
 void road_initialize(road_t* road, direction_t direction);
 void add_vehicle(road_t* roads, const char* ID, direction_t startRoad, direction_t endRoad);
 //void change_lights(road_t* road, direction_t direction, light_state_t light_state);
-void change_lights(road_t* road, light_state_t light_state);
+//void change_lights(road_t* road, light_state_t light_state);
 void cross_update(road_t* roads, char** buff);
-
+void cross_step(road_t* roads, char** buff);
 
 ////////////////testowe
 char which_direction(direction_t direction);
 char which_light(light_state_t light);
-void print_left(uint8_t* left_vehicle_buff);
+void print_left(char** left_vehicle_buff);
 #endif
