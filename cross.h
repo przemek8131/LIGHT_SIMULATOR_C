@@ -6,6 +6,7 @@
 #include<stdbool.h>
 
 #define VEHICLES_SIZE (10)
+#define WAITING_STEPS (4)
 //#define VEHICLES_ID_SIZE (10) //Vehicle1 - Vehicle99 + \0
 #define NUM_OF_ROADS (4)
 //#define NUM_OF_LINES (1)
@@ -41,6 +42,7 @@ typedef struct {
 	light_state_t right_light_state; //strza³ka warunkowa w prawo
 	uint8_t car_num;
 	direction_t direction;
+	uint8_t waiting_steps;
 	//uint8_t num_of_lines; //TODO zwiêkszenie liczby pasów 
 	
 } road_t;
@@ -69,7 +71,7 @@ void road_initialize(road_t* road, direction_t direction);
 void add_vehicle(road_t* roads, const char* ID, direction_t startRoad, direction_t endRoad);
 //void change_lights(road_t* road, direction_t direction, light_state_t light_state);
 //void change_lights(road_t* road, light_state_t light_state);
-void cross_update(road_t* roads, char** buff);
+//void cross_update(road_t* roads, char** buff);
 void cross_step(road_t* roads, char** buff);
 
 ////////////////testowe
