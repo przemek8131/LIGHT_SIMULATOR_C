@@ -1,3 +1,12 @@
+/*
+* @file cross.h
+* @author Kapa³a Przemys³aw
+* @date May 2025
+* @brief
+*
+*/
+
+
 #ifndef CROSS_H
 #define CROSS_H
 
@@ -5,46 +14,50 @@
 #include<stdint.h>
 #include<stdbool.h>
 
-#define VEHICLES_SIZE (10)
+//#define VEHICLES_SIZE (10)
 #define WAITING_STEPS (4)
-//#define VEHICLES_ID_SIZE (10) //Vehicle1 - Vehicle99 + \0
-#define NUM_OF_ROADS (4)
+#define NUM_OF_DIRECTIONS (4)
 //#define NUM_OF_LINES (1)
 //TODO: powinien byæ jeszcze RED_YELLOW_LIGHT, jako ¿ó³te po czerwonym
-typedef enum {GREEN_LIGHT,
-			  YELLOW_LIGHT, 
-			  RED_LIGHT
+typedef enum {
+	GREEN_LIGHT,
+	YELLOW_LIGHT,
+	RED_LIGHT
 } light_state_t;
 
-
-//byæ mo¿e lepiej zrobiæ po prostu char
-typedef enum {N,
-			  S,
-			  E,
-			  W
+typedef enum {
+	N,
+	S,
+	E,
+	W
 } direction_t;
 
-typedef enum {straight,
-			  left,
-			  right
+typedef enum {
+	straight,
+	left,
+	right
 } turn_t;
 
 typedef struct {
 	char* ID;
-	//direction_t startRoad;
 	direction_t end_direction;
 	turn_t turn;
 } vehicle_t;
 
+typedef struct vehicle_node {
+	vehicle_t vehicle;
+	struct vehicle_node* next;
+}vehicle_node_t;
+
 typedef struct {
-	vehicle_t vehicles[VEHICLES_SIZE]; //TODO: musi byæ zrobiona linked list bo nie wiadomo ile aut bêdzie
+	vehicle_node_t* head;
 	light_state_t main_light_state;
 	light_state_t right_light_state; //strza³ka warunkowa w prawo
 	uint8_t car_num;
 	direction_t direction;
 	uint8_t waiting_steps;
-	//uint8_t num_of_lines; //TODO zwiêkszenie liczby pasów 
-	
+	//uint8_t num_of_lines; //zwiêkszenie liczby pasów 
+
 } road_t;
 
 ///TODO: dla wiêkszej liczby pasów
@@ -56,11 +69,11 @@ typedef struct {
 //
 //typedef struct {
 //	line_t line;
-//	line_t* next;
+//	line_node_t* next;
 //}line_node_t;
 //
 //typedef struct {
-//	line_t* line_head;
+//	line_node_t* line_head;
 //	direction_t direction;
 
 	//uint8_t num_of_lines; //TODO zwiêkszenie liczby pasów 
@@ -73,6 +86,7 @@ void add_vehicle(road_t* roads, const char* ID, direction_t startRoad, direction
 //void change_lights(road_t* road, light_state_t light_state);
 //void cross_update(road_t* roads, char** buff);
 void cross_step(road_t* roads, char** buff);
+void send_left_cars(char** left_vehicle_buff);
 
 ////////////////testowe
 char which_direction(direction_t direction);
