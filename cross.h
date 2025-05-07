@@ -2,10 +2,9 @@
 * @file cross.h
 * @author Kapa³a Przemys³aw
 * @date May 2025
-* @brief
+* @brief File containing structures and function declarations for smart traffic light simulator.
 *
 */
-
 
 #ifndef CROSS_H
 #define CROSS_H
@@ -14,11 +13,9 @@
 #include<stdint.h>
 #include<stdbool.h>
 
-//#define VEHICLES_SIZE (10)
 #define WAITING_STEPS (4)
 #define NUM_OF_DIRECTIONS (4)
-//#define NUM_OF_LINES (1)
-//TODO: powinien byæ jeszcze RED_YELLOW_LIGHT, jako ¿ó³te po czerwonym
+
 typedef enum {
 	GREEN_LIGHT,
 	YELLOW_LIGHT,
@@ -26,7 +23,7 @@ typedef enum {
 } light_state_t;
 
 typedef enum {
-	N,
+	N = 0,
 	S,
 	E,
 	W
@@ -56,35 +53,10 @@ typedef struct {
 	uint8_t car_num;
 	direction_t direction;
 	uint8_t waiting_steps;
-	//uint8_t num_of_lines; //zwiêkszenie liczby pasów 
-
 } road_t;
-
-///TODO: dla wiêkszej liczby pasów
-//typedef struct {
-//	vehicle_t vehicles[VEHICLES_SIZE];
-//	light_state_t light_state;
-//	uint8_t car_num;
-//}line_t;
-//
-//typedef struct {
-//	line_t line;
-//	line_node_t* next;
-//}line_node_t;
-//
-//typedef struct {
-//	line_node_t* line_head;
-//	direction_t direction;
-
-	//uint8_t num_of_lines; //TODO zwiêkszenie liczby pasów 
-
-//} road_t;
 
 void road_initialize(road_t* road, direction_t direction);
 void add_vehicle(road_t* roads, const char* ID, direction_t startRoad, direction_t endRoad);
-//void change_lights(road_t* road, direction_t direction, light_state_t light_state);
-//void change_lights(road_t* road, light_state_t light_state);
-//void cross_update(road_t* roads, char** buff);
 void cross_step(road_t* roads, char** buff);
 void send_left_cars(char** left_vehicle_buff);
 

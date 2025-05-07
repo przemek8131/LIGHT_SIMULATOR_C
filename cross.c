@@ -2,7 +2,7 @@
 * @file cross.c
 * @author Kapa³a Przemys³aw
 * @date May 2025
-* @brief
+* @brief File containing function definitions for smart traffic light simulator.
 *
 */
 
@@ -13,7 +13,6 @@
 
 
 void road_initialize(road_t* road, direction_t direction) {
-	//memset(road->vehicles, 0, sizeof(road->vehicles));
 	road->main_light_state = RED_LIGHT;
 	road->right_light_state = RED_LIGHT;
 	road->car_num = 0;
@@ -21,10 +20,11 @@ void road_initialize(road_t* road, direction_t direction) {
 	road->direction = direction;
 	road->head = NULL;
 }
+
 //je¿eli tyle samo aut na dwóch kierunkach, wybierany jest pierwszy znaleziony
 static direction_t busiest_direction(road_t* roads) {
 	uint8_t max_car_num = 0;
-	direction_t direction = N; //TODO
+	direction_t direction = N;
 	for (uint8_t i = 0; i < NUM_OF_DIRECTIONS; i++) {
 		if (roads[i].car_num > max_car_num) {
 			max_car_num = roads[i].car_num;
@@ -33,6 +33,7 @@ static direction_t busiest_direction(road_t* roads) {
 	}
 	return direction;
 }
+
 static direction_t which_is_left_direction(road_t* road) {
 	switch (road->direction) {
 	case N:
@@ -89,15 +90,18 @@ static turn_t which_turn(road_t* road, direction_t end_direction) {
 	}
 	return turn;
 }
+
 static void add_vehicle_to_list(vehicle_node_t** head, const char* ID, turn_t turn, direction_t end_direction) {
 	if (*head == NULL) {
 		*head = (vehicle_node_t*)malloc(sizeof(vehicle_node_t));
-		(*head)->vehicle.end_direction = end_direction;
-		(*head)->vehicle.ID = malloc(strlen(ID) + 1);
-#pragma warning(disable:4996) // wy³¹cza ostrze¿enie o strcpy
-		strcpy((*head)->vehicle.ID, ID);
-		(*head)->vehicle.turn = turn;
-		(*head)->next = NULL;
+		if (*head != NULL) {
+			(*head)->vehicle.end_direction = end_direction;
+			(*head)->vehicle.ID = malloc(strlen(ID) + 1);
+			#pragma warning(disable:4996) // wy³¹cza ostrze¿enie o strcpy
+			strcpy((*head)->vehicle.ID, ID);
+			(*head)->vehicle.turn = turn;
+			(*head)->next = NULL;
+		}
 	}
 	else {
 		vehicle_node_t* current = *head;
@@ -105,11 +109,13 @@ static void add_vehicle_to_list(vehicle_node_t** head, const char* ID, turn_t tu
 			current = current->next;
 		}
 		current->next = (vehicle_node_t*)malloc(sizeof(vehicle_node_t));
-		current->next->vehicle.end_direction = end_direction;
-		current->next->vehicle.ID = malloc(strlen(ID) + 1);
-		strcpy(current->next->vehicle.ID, ID);
-		current->next->vehicle.turn = turn;
-		current->next->next = NULL;
+		if (current->next != NULL) {
+			current->next->vehicle.end_direction = end_direction;
+			current->next->vehicle.ID = malloc(strlen(ID) + 1);
+			strcpy(current->next->vehicle.ID, ID);
+			current->next->vehicle.turn = turn;
+			current->next->next = NULL;
+		}
 	}
 }
 static void remove_vehicle_from_list(vehicle_node_t** head, char** ID) {
@@ -120,14 +126,12 @@ static void remove_vehicle_from_list(vehicle_node_t** head, char** ID) {
 		free(*head);
 		*head = tmp;
 	}
-
 }
 
 void add_vehicle(road_t* roads, const char* ID, direction_t start_direction, direction_t end_direction) {
-
 	for (uint8_t i = 0; i < NUM_OF_DIRECTIONS; i++) {
 		if (roads[i].direction == start_direction) {
-			add_vehicle_to_list(&roads[i].head, ID, which_turn(&roads[i], end_direction), end_direction);
+			add_vehicle_to_list(&(roads[i].head), ID, which_turn(&roads[i], end_direction), end_direction);
 			roads[i].car_num++;
 			break;
 		}
@@ -156,67 +160,14 @@ static char* left_vehicle(road_t* road) {
 		road->waiting_steps = 0; //nie ma kto odjechaæ, wiêc nikt nie czeka
 	return ID;
 }
-
-
-//void add_vehicle(road_t* roads, const char* ID, direction_t start_direction, direction_t end_direction) {
-//	
-//	for (uint8_t i = 0; i < NUM_OF_DIRECTIONS; i++) {
-//		if (roads[i].direction == start_direction) {
-//			roads[i].vehicles[roads[i].car_num].ID = malloc(strlen(ID)+1);
-//			if(roads[i].vehicles[roads[i].car_num].ID != NULL)
-//#pragma warning(disable:4996) // wy³¹cza ostrze¿enie o strcpy
-//				strcpy(roads[i].vehicles[roads[i].car_num].ID, ID);
-//			roads[i].vehicles[roads[i].car_num].end_direction = end_direction;
-//			roads[i].vehicles[roads[i].car_num].turn = which_turn(&roads[i], end_direction);
-//			roads[i].car_num++;
-//			break;	
-//		}
-//	}
-//}
-
-//TODO: zwraca wskaŸnik na dynamicznie zaalokowan¹ pamiêæ z ID pojazdu, nale¿y pamiêtaæ o jej zwolnieniu
-//static char* left_vehicle(road_t* road) {
-//	char* ID = NULL;
-//	if (road->car_num > 0) {
-//		if (road->main_light_state == GREEN_LIGHT) {
-//			if (road->car_num > 0) {
-//				ID = road->vehicles[0].ID;
-//				// tylko po to ¿e auta s¹ w buforze zwyk³ym
-//				for (uint8_t i = 0; i < road->car_num - 1; i++) {
-//					road->vehicles[i] = road->vehicles[i + 1];
-//				}
-//				//
-//				road->car_num--;
-//				road->waiting_steps = 0;
-//			}
-//		}
-//		else if (road->right_light_state == GREEN_LIGHT) {
-//			if (road->vehicles[0].turn == right) {
-//				ID = road->vehicles[0].ID;
-//				// tylko po to ¿e auta s¹ w buforze zwyk³ym
-//				for (uint8_t i = 0; i < road->car_num - 1; i++) {
-//					road->vehicles[i] = road->vehicles[i + 1];
-//				}
-//				//
-//				road->car_num--;
-//				road->waiting_steps = 0;
-//			}
-//		}
-//	}
-//	else
-//		road->waiting_steps = 0; //nie ma kto odjechaæ, wiêc nikt nie czeka
-//	return ID;
-//}
-//TODO: powinna zwracaæ step_count
 static void cross_update(road_t* roads, char** buff) {
-	//static uint8_t step_count = 0; // TODO: do wypisania pojazdów w danym kroku trzeba bêdzie zmieniæ bufor w strukture z danymi i z krokiem 
+	//static uint8_t step_count = 0; 
 	for (uint8_t i = 0; i < NUM_OF_DIRECTIONS; i++) {
 		roads[i].waiting_steps++;
 		buff[i] = left_vehicle(&roads[i]);
 	}
 	//step_count++;
 }
-
 static void change_lights(road_t* road, light_state_t light_state) {
 	road->main_light_state = light_state;
 }
@@ -242,7 +193,6 @@ static void main_green_light_state(road_t* roads) {
 		}
 	}
 }
-
 void cross_step(road_t* roads, char** buff) {
 	//cross_update(roads, buff);
 	direction_t direction = N;	//default value
@@ -258,14 +208,14 @@ void cross_step(road_t* roads, char** buff) {
 	if (!long_waiting)	//je¿eli nie ma kierunku które wystarczaj¹co d³ugo oczekuje, wybierany jest kierunek z najwiêksz¹ liczb¹ aut
 		direction = busiest_direction(roads);
 
-
 	//Gdy na skrzy¿owaniu nie ma ju¿ ¿adnych aut a symulacja jest dalej wykonywana, zielone œwiat³o tylko na kierunku N (domyœlnym)
 	if (roads[direction].car_num == 0) {
 		//zmiana œwiate³ na ¿ó³te, tam gdzie wystêpowa³ ruch
 		transient_light_state(roads);
 		//zmiana ¿ó³tych œwiate³ na czerwone oraz wy³¹czenie œwiate³ warunkowych
 		red_light_state(roads);
-		change_lights(&roads[direction], YELLOW_LIGHT); //g³ówny kierunek ma zielone œwiat³o
+		change_lights(&roads[direction], YELLOW_LIGHT); 
+		//g³ówny kierunek ma zielone œwiat³o
 		main_green_light_state(roads);
 	}
 	else {
@@ -325,49 +275,6 @@ void cross_step(road_t* roads, char** buff) {
 		}
 	}
 	cross_update(roads, buff);
-}
-
-
-
-/////////////////testowe
-char which_direction(direction_t direction) {
-	switch (direction) {
-	case N:
-		return 'N';
-	case S:
-		return 'S';
-	case W:
-		return 'W';
-	case E:
-		return 'E';
-	default:
-		return 'P';
-	}
-}
-
-char which_light(light_state_t light) {
-	switch (light) {
-	case GREEN_LIGHT:
-		return 'G';
-	case RED_LIGHT:
-		return 'R';
-	case YELLOW_LIGHT:
-		return 'Y';
-	default:
-		return 'O';
-	}
-}
-//funkcja do przekazania wy¿ej jakie pojazdy odjecha³y// zwalnianie pamiêci !!!
-void print_left(char** left_vehicle_buff) {
-	printf("-----------------------------------------------------\n");
-	for (uint8_t i = 0; i < NUM_OF_DIRECTIONS; i++) {
-		if (left_vehicle_buff[i] != 0) {
-			printf("Opuscil: %s z kierunku: %c\n", left_vehicle_buff[i], which_direction(i));
-			free(left_vehicle_buff[i]);
-		}
-	}
-	memset(left_vehicle_buff, 0, sizeof(left_vehicle_buff));
-	printf("-----------------------------------------------------\n");
 }
 void send_left_cars(char** left_vehicle_buff) {
 	for (uint8_t i = 0; i < NUM_OF_DIRECTIONS; i++) {
