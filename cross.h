@@ -59,9 +59,4 @@ void road_initialize(road_t* road, direction_t direction);
 void add_vehicle(road_t* roads, const char* ID, direction_t startRoad, direction_t endRoad);
 void cross_step(road_t* roads, char** buff);
 void send_left_cars(char** left_vehicle_buff);
-
-////////////////testowe
-char which_direction(direction_t direction);
-char which_light(light_state_t light);
-void print_left(char** left_vehicle_buff);
 #endif

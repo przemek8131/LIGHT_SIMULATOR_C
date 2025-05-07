@@ -66,4 +66,3 @@ static direction_t translate_direction(char* name) {
 
 
 
-
