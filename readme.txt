@@ -15,7 +15,7 @@ Możliwości rozwoju projektu:
 
 Opis projektu:
 Do realizacji symulacji inteligentnych świateł drogowych wykorzystany został język C, w którym napisana została główna część programu. Natomiast do obsługi plików JSON stanowiących dane wejściowe i wyjściowe programu, wykorzystany został skrypt w języku python "symulator.py". Symulację można uruchomić po wcześniejszej kompilacji programu w c i umieszczeniu pliku wykonywalnego w tym samym katalogu co skrypt. 
-Plik .exe uruchamiany jest jako subproces w skrypcie. Możliwe jest uruchomienie symulacji zarówno podając pliki wej/wyj np. "python symulator.py input.json output.json", jak również bez podania plików wej/wyj, wykorzystane do symulacji zostaną wówczas dane z domyślnych plików input/output.json.
+Plik LIGHT_SIMULATOR.exe uruchamiany jest jako subproces w skrypcie. Możliwe jest uruchomienie symulacji zarówno podając pliki wej/wyj np. "python symulator.py input.json output.json", jak również bez podania plików wej/wyj, wykorzystane do symulacji zostaną wówczas dane z domyślnych plików input/output.json.
 
 Opis działania algorytmu zmiany świateł:
 Algorytm opiera swoje działanie na priorytetyzowaniu kierunku z którego odjechać chce najwięcej aut. Oprócz tego, nadrzędny jest czas oczekiwania (liczba kroków symulacji) pojazdów na danym kierunku. Jeżeli przekroczy on zadaną wartość, wybierany jest kierunek, który oczekiwał najdłużej. Przy czym zarówno dla tej samej liczby pojazdów dla kilku kierunków, jak również dla tego samego czasu oczekiwania wybierany jest pierwszy znaleziony kierunek.
