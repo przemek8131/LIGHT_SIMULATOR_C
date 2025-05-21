@@ -15,7 +15,7 @@ def main():
         data = json.load(f)
 
     proc = subprocess.Popen(
-        ["symulator.exe"],
+        ["LIGHT_SIMULATOR.exe"],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         text=True
